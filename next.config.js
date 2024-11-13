@@ -17,28 +17,30 @@ const withMDX = require('@next/mdx')({
   },
 });
 
-
 // Next configuration with support for rewrting API to existing common services
 const nextConfig = {
-  output: 'standalone',
   reactStrictMode: true,
   pageExtensions: ['mdx', 'md', 'jsx', 'js', 'tsx', 'ts'],
   basePath: process.env.BASE_PATH || '',
+  experimental: {
+    esmExternals: true,
+    instrumentationHook: true,
+  },
   transpilePackages: ['@gen3/core', '@gen3/frontend'],
   webpack: (config) => {
     config.infrastructureLogging = {
-      level: "error",
+      level: 'error',
     };
     return config;
   },
   async headers() {
     return [
       {
-        source: "/(.*)?", // Matches all pages
+        source: '/(.*)?', // Matches all pages
         headers: [
           {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
           },
         ],
       },

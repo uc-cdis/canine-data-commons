@@ -6,8 +6,9 @@
       "navigationPanel": "bg-base-max text-primary"
     },
     "logo": {
-      "src": "/icons/gen3-dark.svg",
-      "height": 128,
+      "src": "/icons/logo.png",
+      "width": 120,
+      "height": 60,
       "href": "/"
     },
     "items": [

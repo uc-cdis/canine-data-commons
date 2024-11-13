@@ -1,9 +1,9 @@
 {
-  "primary": "#2C2C54",
-  "secondary": "#AAABB8",
-  "accent": "#474787",
+  "primary": "#3283c8",
+  "secondary": "#ef8523",
+  "accent": "#872d41",
   "base": "#ECECEC",
-  "accentWarm": "#892115",
+  "accentWarm": "#dad315",
   "accentCool": "#255990",
   "chart": "#0d95A1"
 }
