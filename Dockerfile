@@ -16,6 +16,8 @@ WORKDIR /gen3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    python \
+    pip \
     libssl1.1 \
     libgnutls30 \
     ca-certificates \
@@ -31,21 +33,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && npm install -g npm@10.5.2
 
 RUN  addgroup --system --gid 1001 nextjs && adduser --system --uid 1001 nextjs
-COPY ./package.json ./package-lock.json ./
-COPY ./package-lock.json ./
+COPY ./package.json ./package-lock.json ./next.config.js /tsconfig.json  ./tailwind.config.js ./postcss.config.js ./start.sh ./
 COPY ./src ./src
 COPY ./public ./public
 COPY ./config ./config
-COPY ./next.config.js ./
-COPY ./tsconfig.json ./
-COPY ./.env.development ./
-COPY ./.env.production ./
-COPY ./tailwind.config.js ./
-COPY ./postcss.config.js ./
+COPY ./jupyter-lite ./jupyter-lite
 RUN npm ci
 RUN npm install \
     "@swc/core" \
-    "@napi-rs/magic-string"
+    "@napi-rs/magic-string" \
 RUN npm run build
-ENV PORT=80
-CMD ["npm", "run", "start"]
+RUN pip install -r ./jupyter-lite/requirements.txt
+RUN jupyter lite build --contents ./jupyter-lite --output-dir dist ./jupyter
+ENV PORT=3000
+CMD bash ./start.sh
