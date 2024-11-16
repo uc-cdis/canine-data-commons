@@ -38,12 +38,13 @@ COPY ./src ./src
 COPY ./public ./public
 COPY ./config ./config
 COPY ./jupyter-lite ./jupyter-lite
+RUN pip install -r ./jupyter-lite/requirements.txt
+RUN jupyter lite build --contents ./jupyter-lite --output-dir dist ./jupyter
 RUN npm ci
 RUN npm install \
     "@swc/core" \
-    "@napi-rs/magic-string" \
+    "@napi-rs/magic-string"
 RUN npm run build
-RUN pip install -r ./jupyter-lite/requirements.txt
-RUN jupyter lite build --contents ./jupyter-lite --output-dir dist ./jupyter
+
 ENV PORT=3000
 CMD bash ./start.sh
