@@ -39,6 +39,9 @@
     ]
   },
   "topBar": {
+    "classNames" : {
+      "root" : "bg-navigation-footer"
+    }
     "items": [
       {
         "rightIcon": "gen3:upload",
