@@ -16,7 +16,7 @@ WORKDIR /gen3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    python \
+    python3 \
     pip \
     libssl1.1 \
     libgnutls30 \
@@ -38,13 +38,23 @@ COPY ./src ./src
 COPY ./public ./public
 COPY ./config ./config
 COPY ./jupyter-lite ./jupyter-lite
-RUN pip install -r ./jupyter-lite/requirements.txt
-RUN jupyter lite build --contents ./jupyter-lite --output-dir dist ./jupyter
+RUN pip3 install -r ./jupyter-lite/requirements.txt
+RUN jupyter lite build --contents ./jupyter-lite/contents/files --lite-dir ./jupyter-lite/contents --output-dir ./public/jupyter
 RUN npm ci
 RUN npm install \
     "@swc/core" \
     "@napi-rs/magic-string"
 RUN npm run build
 
+# Set environment variables
 ENV PORT=3000
-CMD bash ./start.sh
+ENV NODE_ENV=production
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "run", "start"]
