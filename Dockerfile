@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 
 ARG NODE_VERSION=20
 
-ARG BASE_PATH
+ENV BASE_PATH=/ff
 ARG NEXT_PUBLIC_PORTAL_BASENAME
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
