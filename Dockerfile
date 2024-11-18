@@ -1,16 +1,17 @@
 # Build stage
 FROM node:20-alpine AS builder
 
+ARG NODE_VERSION=20
+
+ARG BASE_PATH
+ARG NEXT_PUBLIC_PORTAL_BASENAME
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
+
 WORKDIR /gen3
 
 # Install Python 3.11
 RUN apk add --no-cache python3 python3-dev py3-pip build-base linux-headers && ln -sf python3 /usr/bin/python
-#RUN apk update && \
-#    apk add python3.11 python3.11-dev python3-pip && \
-#    rm -rf /var/lib/apt/lists/*
-
-# Set the default Python version to 3.11
-#RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
 
 # Copy only the files needed for dependency installation
 COPY package*.json ./
@@ -25,7 +26,11 @@ RUN rm /usr/lib/python*/EXTERNALLY-MANAGED && \
     pip3 install -r ./jupyter-lite/requirements.txt
 
 # Copy source files
-COPY . .
+COPY ./package.json ./package-lock.json ./next.config.js /tsconfig.json  ./tailwind.config.js ./postcss.config.js ./start.sh ./
+COPY ./src ./src
+COPY ./public ./public
+COPY ./config ./config
+COPY ./jupyter-lite ./jupyter-lite
 
 # Build jupyter-lite and Next.js application
 RUN jupyter lite build --contents ./jupyter-lite/contents/files --lite-dir ./jupyter-lite/contents --output-dir ./public/jupyter
