@@ -1,9 +1,5 @@
-# docker build -t gen3ff .
-# docker run -p 3000:3000 -it gen3ff
-# for Macbook silicon M1/m2 uncomment the following lines and comment quay.io/cdis/ubuntu:20.04:
-#FROM arm64v8/ubuntu:20.04 as build
-
-FROM quay.io/cdis/ubuntu:20.04 AS build
+# Build stage
+FROM node:20-alpine AS builder
 
 ARG NODE_VERSION=20
 
@@ -14,38 +10,54 @@ ENV PATH=$PATH:/home/node/.npm-global/bin
 
 WORKDIR /gen3
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libssl1.1 \
-    libgnutls30 \
-    ca-certificates \
-    curl \
-    git \
-    gnupg \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_VERSION.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-    && apt-get update \
-    && apt-get install -y nodejs \
-    && apt-get clean \
-    && npm install -g npm@10.5.2
+# Install Python 3.11
+RUN apk add --no-cache python3 python3-dev py3-pip build-base linux-headers && ln -sf python3 /usr/bin/python
 
-RUN  addgroup --system --gid 1001 nextjs && adduser --system --uid 1001 nextjs
-COPY ./package.json ./package-lock.json ./
-COPY ./package-lock.json ./
-COPY ./src ./src
-COPY ./public ./public
-COPY ./config ./config
-COPY ./next.config.js ./
-COPY ./tsconfig.json ./
-COPY ./.env.development ./
-COPY ./.env.production ./
-COPY ./tailwind.config.js ./
-COPY ./postcss.config.js ./
+# Copy only the files needed for dependency installation
+COPY package*.json ./
+COPY ./jupyter-lite/requirements.txt ./jupyter-lite/requirements.txt
+
+# Install dependencies
 RUN npm ci
 RUN npm install \
     "@swc/core" \
     "@napi-rs/magic-string"
+RUN rm /usr/lib/python*/EXTERNALLY-MANAGED && \
+    pip3 install -r ./jupyter-lite/requirements.txt
+
+# Copy source files
+COPY ./package.json ./package-lock.json ./next.config.js /tsconfig.json  ./tailwind.config.js ./postcss.config.js ./start.sh ./
+COPY ./src ./src
+COPY ./public ./public
+COPY ./config ./config
+COPY ./jupyter-lite ./jupyter-lite
+
+# Build jupyter-lite and Next.js application
+RUN jupyter lite build --contents ./jupyter-lite/contents/files --lite-dir ./jupyter-lite/contents --output-dir ./public/jupyter
 RUN npm run build
-ENV PORT=80
-CMD ["npm", "run", "start"]
+
+# Production stage
+FROM node:20-alpine AS runner
+
+WORKDIR /gen3
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Set production environment
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Copy only necessary files from builder
+COPY --from=builder --chown=nextjs:nodejs /gen3/.next ./.next
+COPY --from=builder /gen3/node_modules ./node_modules
+COPY --from=builder /gen3/package.json ./package.json
+COPY --from=builder /gen3/public ./public
+COPY --from=builder /gen3/config ./config
+# Switch to non-root user
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
