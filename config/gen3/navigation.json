@@ -6,7 +6,7 @@
       "navigationPanel": "bg-base-max text-primary-darker"
     },
     "logo": {
-      "src": "/images/logo.png",
+      "src": "/ff/images/logo.png",
       "width": 256,
       "height": 128,
       "href": "/"
