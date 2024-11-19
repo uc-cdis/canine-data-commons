@@ -3,11 +3,9 @@ FROM node:20-alpine AS builder
 
 ARG NODE_VERSION=20
 
-ENV BASE_PATH=/ff
-ARG NEXT_PUBLIC_PORTAL_BASENAME
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
-
+ENV NEXT_PUBLIC_BASEPATH=/ff
 WORKDIR /gen3
 
 # Install Python 3.11
@@ -46,8 +44,9 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Set production environment
-ENV NODE_ENV=production
-ENV PORT=3000
+ENV NODE_ENV=production \
+    PORT=3000 \
+    NEXT_PUBLIC_BASEPATH=/ff
 
 # Copy only necessary files from builder
 COPY --from=builder --chown=nextjs:nodejs /gen3/.next ./.next
@@ -55,6 +54,8 @@ COPY --from=builder /gen3/node_modules ./node_modules
 COPY --from=builder /gen3/package.json ./package.json
 COPY --from=builder /gen3/public ./public
 COPY --from=builder /gen3/config ./config
+COPY --from=builder --chown=nextjs:nodejs /gen3/next.config.js ./next.config.js
+
 # Switch to non-root user
 USER nextjs
 
