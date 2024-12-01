@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 'use strict';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
