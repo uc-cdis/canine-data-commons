@@ -19,7 +19,7 @@
       "tabs": [
         {
           "title": "Subject",
-          "fields":[
+          "fields": [
             "project_id",
             "gender",
             "breed",
@@ -29,7 +29,7 @@
         },
         {
           "title": "Diagnosis",
-          "fields":[
+          "fields": [
             "disease_type",
             "primary_site"
           ]
@@ -40,7 +40,7 @@
       "enabled": true,
       "detailsConfig": {
         "panel": "default",
-        "mode" : "click",
+        "mode": "click",
         "idField": "project_id",
         "title": "Details"
       },
@@ -70,7 +70,7 @@
             "leftIcon": "datafile",
             "rightIcon": "download",
             "action": "data-json",
-            "actionArgs" : {
+            "actionArgs": {
               "filename": "canine_subjects_table.json"
             }
           },
@@ -81,7 +81,7 @@
             "leftIcon": "datafile",
             "rightIcon": "download",
             "action": "data-csv",
-            "actionArgs" : {
+            "actionArgs": {
               "filename": "canine_subjects_table.csv"
             }
           },
@@ -92,7 +92,7 @@
             "leftIcon": "datafile",
             "rightIcon": "download",
             "action": "data-tsv",
-            "actionArgs" : {
+            "actionArgs": {
               "filename": "canine_subjects_table.tsv"
             }
           }
@@ -113,7 +113,12 @@
           "resourceIdField": "object_id",
           "referenceIdFieldInResourceIndex": "project_id",
           "referenceIdFieldInDataIndex": "project_id",
-          "fileFields": ["file_name", "file_size", "md5sum", "object_id"]
+          "fileFields": [
+            "file_name",
+            "file_size",
+            "md5sum",
+            "object_id"
+          ]
         }
       }
     ],
@@ -149,10 +154,11 @@
         "referenceIdFieldInResourceIndex": "subject_id",
         "referenceIdFieldInDataIndex": "subject_id"
       }
-      },
-      "accessibleFieldCheckList": ["project"],
-      "accessibleValidationField": "project"
-    }
+    },
+    "accessibleFieldCheckList": [
+      "project"
+    ],
+    "accessibleValidationField": "project"
   },
   {
     "tabTitle": "Data Files",
