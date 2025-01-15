@@ -1,9 +1,8 @@
 import App, { AppProps, AppContext, AppInitialProps } from 'next/app';
-import React, { useEffect, useRef } from 'react';
-
+import React, { useEffect, useMemo, useRef } from 'react';
+import { MantineProvider } from '@mantine/core';
 import { Faro, FaroErrorBoundary, withFaroProfiler } from '@grafana/faro-react';
-
-import { initGrafanaFaro } from '@/lib/Grafana/grafana';
+import { initGrafanaFaro } from '../lib/Grafana/grafana';
 
 import {
   Gen3Provider,
@@ -11,11 +10,12 @@ import {
   type ModalsConfig,
   RegisteredIcons,
   Fonts,
+  createMantineTheme,
   SessionConfiguration,
-  registerCohortDiscoveryApp,
+  // registerCohortDiscoveryApp,
   registerCohortDiversityApp,
   registerCohortBuilderDefaultPreviewRenderers,
-  registerExplorerDefaultCellRenderers,
+  registerMetadataSchemaApp,
 } from '@gen3/frontend';
 
 import { registerCohortTableCustomCellRenderers } from '@/lib/CohortBuilder/CustomCellRenderers';
@@ -38,8 +38,6 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
   axe(React, ReactDOM, 1000);
 }
 
-// TODO fix app registration
-
 interface Gen3AppProps {
   colors: Record<string, TenStringArray>;
   icons: Array<RegisteredIcons>;
@@ -49,14 +47,14 @@ interface Gen3AppProps {
 }
 
 const Gen3App = ({
-  Component,
-  pageProps,
-  colors,
-  icons,
-  themeFonts,
-  sessionConfig,
-  modalsConfig,
-}: AppProps & Gen3AppProps) => {
+                   Component,
+                   pageProps,
+                   colors,
+                   icons,
+                   themeFonts,
+                   sessionConfig,
+                   modalsConfig,
+                 }: AppProps & Gen3AppProps) => {
   useEffect(() => {
     setDRSHostnames(drsHostnames);
   }, []);
@@ -71,26 +69,31 @@ const Gen3App = ({
     //   !faroRef.current
     // ) {
     if (!faroRef.current) faroRef.current = initGrafanaFaro();
-    registerCohortDiscoveryApp();
+    //  registerCohortDiscoveryApp();
     registerCohortDiversityApp();
-    registerExplorerDefaultCellRenderers();
+    registerMetadataSchemaApp();
     registerCohortBuilderDefaultPreviewRenderers();
     registerCohortTableCustomCellRenderers();
     registerCustomExplorerDetailsPanels();
     // }
   }, []);
 
+  const theme = useMemo(
+    () => createMantineTheme(themeFonts, colors),
+    [themeFonts, colors],
+  );
+
   return (
     <FaroErrorBoundary>
-      <Gen3Provider
-        colors={colors}
-        icons={icons}
-        fonts={themeFonts}
-        sessionConfig={sessionConfig}
-        modalsConfig={modalsConfig}
-      >
-        <Component {...pageProps} />
-      </Gen3Provider>
+      <MantineProvider theme={theme}>
+        <Gen3Provider
+          icons={icons}
+          sessionConfig={sessionConfig}
+          modalsConfig={modalsConfig}
+        >
+          <Component {...pageProps} />
+        </Gen3Provider>
+      </MantineProvider>
     </FaroErrorBoundary>
   );
 };

@@ -25,6 +25,32 @@
     },
     {
       "break": "standard"
+    },
+    {
+      "cardsArea": {
+        "title": "",
+        "cards": [
+          {
+            "icon": "MdOutlineSearch",
+            "bodyText": "Search studies and related datasets for download or analysis in a workspace.",
+            "btnText": "Discover",
+            "href": "/Discovery",
+            "linkType": "portal"
+          },
+          {
+            "icon": "MdOutlineBarChart",
+            "bodyText": "Explore Tutorials and Example Analysis.",
+            "btnText": "Analyze",
+            "href": "/resource-browser",
+            "linkType": "portal"
+          }
+        ]
+      }
+    },
+    {
+      "quoteArea": {
+        "quote": "Our vision is a world in which researchers have ready access to the data needed and the tools required to make data-driven discoveries that increase our scientific knowledge and improve the quality of life."
+      }
     }
   ]
 }

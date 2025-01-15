@@ -149,6 +149,9 @@
         "referenceIdFieldInResourceIndex": "subject_id",
         "referenceIdFieldInDataIndex": "subject_id"
       }
+      },
+      "accessibleFieldCheckList": ["project"],
+      "accessibleValidationField": "project"
     }
   },
   {

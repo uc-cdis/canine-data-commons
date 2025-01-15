@@ -1,3 +1,5 @@
+# docker build -t ff .
+# docker run -p 3000:3000 -it ff
 # Build stage
 FROM node:20-alpine AS builder
 
@@ -55,9 +57,10 @@ COPY --from=builder /gen3/node_modules ./node_modules
 COPY --from=builder /gen3/package.json ./package.json
 COPY --from=builder /gen3/public ./public
 COPY --from=builder /gen3/config ./config
+RUN chown nextjs:nextjs /gen3/.next
 # Switch to non-root user
-USER nextjs
+USER nextjs:nextjs
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD bash ./start.sh
