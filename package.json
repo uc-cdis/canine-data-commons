@@ -21,7 +21,7 @@
     "@fontsource/montserrat": "^5.0.19",
     "@fontsource/poppins": "^5.0.15",
     "@fontsource/source-sans-pro": "^5.0.8",
-    "@gen3/frontend": "^0.10.53",
+    "@gen3/frontend": "^0.10.79",
     "@grafana/faro-react": "^1.9.1",
     "@grafana/faro-web-sdk": "^1.9.1",
     "@grafana/faro-web-tracing": "^1.9.1",
