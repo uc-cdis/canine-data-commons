@@ -15,4 +15,3 @@ jobs:
         run: npm ci
       - name: Run ESLint
         run: npm run lint
-        
